@@ -105,6 +105,8 @@ function AddClaim() {
         <div className="col-md-6">
           <h2>Add new claim</h2>
           <form onSubmit={handleSubmit}>
+          <br></br>
+
             <div className="form-group">
               <label htmlFor="claimMail">Email:</label>
               <input
@@ -117,6 +119,8 @@ function AddClaim() {
                 required
               />
             </div>
+            <br></br>
+
             <div className="form-group">
               <label htmlFor="claimTitle">Title:</label>
               <input
@@ -129,6 +133,8 @@ function AddClaim() {
                 required
               />
             </div>
+            <br></br>
+
             <div className="form-group">
               <label htmlFor="claimDetails">Description:</label>
               <textarea
