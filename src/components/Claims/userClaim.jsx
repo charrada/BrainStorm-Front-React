@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 function UserClaim() {
   const [claims, setClaims] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("ahla"); // Set the default email
   const [currentPage, setCurrentPage] = useState(1);
   const [claimsPerPage] = useState(5);
   const [selectedClaim, setSelectedClaim] = useState(null);
@@ -17,7 +17,7 @@ function UserClaim() {
     if (search) {
       // Fetch claims from the backend only when there's a search query
       setLoading(true); // Set loading to true
-      fetch(`http://localhost:8090/claim/?search=${search}`)
+      fetch(`http://localhost:8090/claim/?searchEmail=${search}`)
         .then((response) => response.json())
         .then((data) => setClaims(data))
         .catch((error) => {
@@ -53,7 +53,7 @@ function UserClaim() {
 
       <InputGroup className="mb-3">
         <FormControl
-          placeholder="Put your Email"
+          placeholder="Search by Email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
