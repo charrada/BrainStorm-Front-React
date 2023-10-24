@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Table } from "react-bootstrap";
 
 function ClaimDetails() {
   // Access the claimId parameter from the URL
@@ -25,14 +26,34 @@ function ClaimDetails() {
     <div className="container text-center mt-2">
       <h1>Claim Details</h1>
       <br />
-      <div>
-        <h3>ID: {claim.idClaim}</h3>
-        <p>Email: {claim.claimMail}</p>
-        <p>Title: {claim.claimTitle}</p>
-        <p>Status: {claim.status === 0 ? "Unprocessed" : "Processed"}</p>
-        <p>Claim Date: {claim.claimDate}</p>
-        <p>Claim Rating: {claim.claimRating}</p>
-      </div>
+      <Table striped bordered hover responsive="sm" className="mx-auto" style={{ maxWidth: "600px" }}>
+        <tbody>
+          <tr>
+            <th>ID</th>
+            <td>{claim.idClaim}</td>
+          </tr>
+          <tr>
+            <th>Email</th>
+            <td>{claim.claimMail}</td>
+          </tr>
+          <tr>
+            <th>Title</th>
+            <td>{claim.claimTitle}</td>
+          </tr>
+          <tr>
+            <th>Status</th>
+            <td>{claim.status === 0 ? "Unprocessed" : "Processed"}</td>
+          </tr>
+          <tr>
+            <th>Claim Date</th>
+            <td>{claim.claimDate}</td>
+          </tr>
+          <tr>
+            <th>Claim Rating</th>
+            <td>{claim.claimRating}</td>
+          </tr>
+        </tbody>
+      </Table>
     </div>
   );
 }
