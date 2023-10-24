@@ -72,7 +72,7 @@ function AddClaim() {
     for (let i = 1; i <= 5; i++) {
       const className = i <= selectedRating ? "star active" : "star";
       stars.push(
-        <button
+        <span
           key={i}
           className={className}
           data-rating={i}
@@ -87,17 +87,20 @@ function AddClaim() {
           }}
         >
           ⭐
-        </button>
+        </span>
       );
     }
     return stars;
   };
 
-  const handleStarClick = (rating) => {
-    // Set both the selected rating and the claim's rating
-    setSelectedRating(rating);
-    setClaim({ ...claim, claimRating: rating });
-  };
+// ... (previous code)
+
+const handleStarClick = (rating, event) => {
+  setSelectedRating(rating);
+  setClaim({ ...claim, claimRating: rating });
+};
+
+// ... (rest of your code)
 
   return (
     <div className="container mt-5">

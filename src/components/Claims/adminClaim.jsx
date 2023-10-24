@@ -5,12 +5,16 @@ function AdminClaim() {
   const [claims, setClaims] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [claimsPerPage] = useState(10);
+  const [claimsPerPage] = useState(5);
 
   useEffect(() => {
-    fetch("http://localhost:8090/claim/") // Specify the correct API endpoint
+    // Fetch claims from the backend when the component mounts
+    fetch("http://localhost:8090/claim/")
       .then((response) => response.json())
-      .then((data) => setClaims(data));
+      .then((data) => setClaims(data))
+      .catch((error) => {
+        console.error("Error fetching claims: ", error);
+      });
   }, []);
 
   // Filter claims based on the search query
@@ -32,9 +36,64 @@ function AdminClaim() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const handleDeleteClaim = (idClaim) => {
+    if (window.confirm("Are you sure you want to delete this claim?")) {
+      fetch(`http://localhost:8090/claim/deleteClaim/${idClaim}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            fetchClaims(); // Call the function to fetch claims
+          } else {
+            // Handle other error conditions
+            response.text().then((errorText) => {
+              console.error(`Failed to delete claim: ${errorText}`);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error: ", error);
+        });
+    }
+  };
+  const handleStatusChange = (idClaim, currentStatus) => {
+    if (window.confirm("Are you sure you want to change claim status?")) {
+      const newStatus = currentStatus === 0 ? 1 : 0;
+  
+      fetch(`http://localhost:8090/claim/updateStatus/${idClaim}?status=${newStatus}`, {
+        method: "PUT",
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            fetchClaims(); // Call the function to fetch claims
+          } else {
+            // Handle other error conditions
+            response.text().then((errorText) => {
+              console.error(`Failed to update claim status: ${errorText}`);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error: ", error);
+        });
+    }
+  };
+  
+
+  const fetchClaims = () => {
+    fetch("http://localhost:8090/claim/")
+      .then((response) => response.json())
+      .then((data) => setClaims(data))
+      .catch((error) => {
+        console.error("Error fetching claims: ", error);
+      });
+  };
+
   return (
-    <div className="container text-center mt-4">
+    <div className="container text-center mt-2">
       <h1>List of Claims</h1>
+      <br></br>      
+
       <InputGroup className="mb-3">
         <FormControl
           placeholder="Search by Email"
@@ -42,16 +101,15 @@ function AdminClaim() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </InputGroup>
-      <Table striped bordered hover responsive="lg" className="mx-auto">
+      
+      <Table striped bordered hover responsive="sm" className="mx-auto">
         <thead>
           <tr>
             <th>ID</th>
             <th>Email</th>
             <th>Title</th>
-            <th>Details</th>
             <th>Status</th>
-            <th>Date</th>
-            <th>Rating</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -60,20 +118,42 @@ function AdminClaim() {
               <td>{claim.idClaim}</td>
               <td>{claim.claimMail}</td>
               <td>{claim.claimTitle}</td>
-              <td>{claim.claimDetails}</td>
-              <td>{claim.status}</td>
-              <td>{formatDate(claim.claimDate)}</td>
-              <td>⭐{claim.claimRating}</td>
+              <td>
+              <button
+  className={claim.status === 1 ? "btn btn-success" : "btn btn-secondary"}
+  onClick={() => handleStatusChange(claim.idClaim, claim.status)}
+>
+  {claim.status === 0 ? "Unprocessed" : "Processed"}
+</button>
+
+              </td>
+              <td>
+                <button className="btn btn-primary">Details</button>
+                &nbsp;
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleDeleteClaim(claim.idClaim)}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
       </Table>
       <Pagination className="justify-content-center">
-        {Array.from({ length: Math.ceil(filteredClaims.length / claimsPerPage) }, (_, i) => (
-          <Pagination.Item key={i + 1} active={i + 1 === currentPage} onClick={() => paginate(i + 1)}>
-            {i + 1}
-          </Pagination.Item>
-        ))}
+        {Array.from(
+          { length: Math.ceil(filteredClaims.length / claimsPerPage) },
+          (_, i) => (
+            <Pagination.Item
+              key={i + 1}
+              active={i + 1 === currentPage}
+              onClick={() => paginate(i + 1)}
+            >
+              {i + 1}
+            </Pagination.Item>
+          )
+        )}
       </Pagination>
     </div>
   );
