@@ -7,6 +7,17 @@ function ClaimDetails() {
   const { claimId } = useParams();
   const [claim, setClaim] = useState(null);
 
+
+  function formatDate(dateString) {
+    const options = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  }
+
+  
   useEffect(() => {
     // Fetch the claim details using the claimId
     fetch(`http://localhost:8090/claim/getClaimById/${claimId}`)
@@ -24,7 +35,9 @@ function ClaimDetails() {
 
   return (
     <div className="container text-center mt-2">
+      
       <h1>Claim Details</h1>
+      <br />
       <br />
       <Table striped bordered hover responsive="sm" className="mx-auto" style={{ maxWidth: "600px" }}>
         <tbody>
@@ -41,16 +54,16 @@ function ClaimDetails() {
             <td>{claim.claimTitle}</td>
           </tr>
           <tr>
-            <th>Status</th>
-            <td>{claim.status === 0 ? "Unprocessed" : "Processed"}</td>
+            <th>Details</th>
+            <td>{claim.claimDetails}</td>
           </tr>
           <tr>
             <th>Claim Date</th>
-            <td>{claim.claimDate}</td>
+            <td>{formatDate(claim.claimDate)}</td>
           </tr>
           <tr>
             <th>Claim Rating</th>
-            <td>{claim.claimRating}</td>
+            <td>{claim.claimRating}⭐</td>
           </tr>
         </tbody>
       </Table>
