@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Table, InputGroup, FormControl, Pagination } from "react-bootstrap";
+import ClaimDetails from "./claimDetails"; // Import the new component
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function AdminClaim() {
   const [claims, setClaims] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [claimsPerPage] = useState(5);
+  const [selectedClaim, setSelectedClaim] = useState(null); // State variable for the selected claim
 
   useEffect(() => {
     // Fetch claims from the backend when the component mounts
@@ -29,6 +32,8 @@ function AdminClaim() {
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const navigate = useNavigate(); // Get the navigate function
 
   // Function to format the date as "day month year"
   const formatDate = (dateString) => {
@@ -56,10 +61,11 @@ function AdminClaim() {
         });
     }
   };
+
   const handleStatusChange = (idClaim, currentStatus) => {
     if (window.confirm("Are you sure you want to change claim status?")) {
       const newStatus = currentStatus === 0 ? 1 : 0;
-  
+
       fetch(`http://localhost:8090/claim/updateStatus/${idClaim}?status=${newStatus}`, {
         method: "PUT",
       })
@@ -78,7 +84,11 @@ function AdminClaim() {
         });
     }
   };
-  
+
+  const handleDetailsClick = (claim) => {
+    // Navigate to the claim details page using the claim ID
+    navigate(`/adminclaims/details/${claim.idClaim}`);
+  };
 
   const fetchClaims = () => {
     fetch("http://localhost:8090/claim/")
@@ -92,7 +102,7 @@ function AdminClaim() {
   return (
     <div className="container text-center mt-2">
       <h1>List of Claims</h1>
-      <br></br>      
+      <br></br>
 
       <InputGroup className="mb-3">
         <FormControl
@@ -101,7 +111,7 @@ function AdminClaim() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </InputGroup>
-      
+
       <Table striped bordered hover responsive="sm" className="mx-auto">
         <thead>
           <tr>
@@ -119,16 +129,17 @@ function AdminClaim() {
               <td>{claim.claimMail}</td>
               <td>{claim.claimTitle}</td>
               <td>
-              <button
-  className={claim.status === 1 ? "btn btn-success" : "btn btn-secondary"}
-  onClick={() => handleStatusChange(claim.idClaim, claim.status)}
->
-  {claim.status === 0 ? "Unprocessed" : "Processed"}
-</button>
-
+                <button
+                  className={claim.status === 1 ? "btn btn-success" : "btn btn-secondary"}
+                  onClick={() => handleStatusChange(claim.idClaim, claim.status)}
+                >
+                  {claim.status === 0 ? "Unprocessed" : "Processed"}
+                </button>
               </td>
               <td>
-                <button className="btn btn-primary">Details</button>
+                <button className="btn btn-primary" onClick={() => handleDetailsClick(claim)}>
+                  Details
+                </button>
                 &nbsp;
                 <button
                   className="btn btn-danger"
@@ -141,6 +152,9 @@ function AdminClaim() {
           ))}
         </tbody>
       </Table>
+
+      {selectedClaim && <ClaimDetails claim={selectedClaim} />}
+
       <Pagination className="justify-content-center">
         {Array.from(
           { length: Math.ceil(filteredClaims.length / claimsPerPage) },
