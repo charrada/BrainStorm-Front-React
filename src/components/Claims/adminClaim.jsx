@@ -87,7 +87,7 @@ function AdminClaim() {
 
   const handleDetailsClick = (claim) => {
     // Navigate to the claim details page using the claim ID
-    navigate(`/adminclaims/details/${claim.idClaim}`);
+    navigate(`/claim/details/${claim.idClaim}`);
   };
 
   const fetchClaims = () => {
