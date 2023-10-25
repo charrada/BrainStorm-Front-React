@@ -2,6 +2,7 @@
 
 import  { useState } from 'react';
 import { Button, TextField, Paper, Grid, Typography } from '@mui/material';
+import axios from 'axios';
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -32,11 +33,30 @@ export default function Register() {
             } else {
                 console.error("Registration error:", data);
             }
+            const formDataCoordinator = {
+                userFullName: formData.employeename,
+                userEmail: formData.email,
+                userPassword: formData.password
+            }
+            if(formData.role === "user"){
+                await axios.post("http://localhost:8082/user/create", formDataCoordinator).then(
+                    (res) => console.log(res.data)
+                ).catch(
+                    (error) => console.log(error)
+                );
+            }else if(formData.role === "professor"){
+                await axios.post("http://localhost:8082/expert/create", formDataCoordinator).then(
+                    (res) => console.log(res.data)
+                ).catch(
+                    (error) => console.log(error)
+                );
+            }
         } catch (error) {
             console.error("There was an error during registration:", error);
         }
     };
 
+    console.log(formData)
     return (
         <Paper style={{ padding: '16px', maxWidth: '500px', margin: 'auto' }}>
             <Grid container spacing={2}>

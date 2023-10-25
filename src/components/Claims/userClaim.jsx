@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 function UserClaim() {
   const [claims, setClaims] = useState([]);
-  const [search, setSearch] = useState("ahla"); // Set the default email
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const userEmail = userData ? userData.email : ""; // Si l'utilisateur existe, utilisez son email, sinon, utilisez ""
+  const [search, setSearch] = useState(userEmail);
   const [currentPage, setCurrentPage] = useState(1);
   const [claimsPerPage] = useState(5);
   const [selectedClaim, setSelectedClaim] = useState(null);
@@ -38,7 +40,10 @@ function UserClaim() {
 
   const indexOfLastClaim = currentPage * claimsPerPage;
   const indexOfFirstClaim = indexOfLastClaim - claimsPerPage;
-  const currentClaims = filteredClaims.slice(indexOfFirstClaim, indexOfLastClaim);
+  const currentClaims = filteredClaims.slice(
+    indexOfFirstClaim,
+    indexOfLastClaim
+  );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -87,7 +92,9 @@ function UserClaim() {
                 <td>
                   <button
                     className={
-                      claim.status === 1 ? "btn btn-success" : "btn btn-secondary"
+                      claim.status === 1
+                        ? "btn btn-success"
+                        : "btn btn-secondary"
                     }
                   >
                     {claim.status === 0 ? "Unprocessed" : "Processed"}

@@ -4,8 +4,11 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 function AddClaim() {
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const userEmail = userData ? userData.email : ""; // Si l'utilisateur existe, utilisez son email, sinon, utilisez ""
+
   const [claim, setClaim] = useState({
-    claimMail: "",
+    claimMail: userEmail,
     claimTitle: "",
     claimDetails: "",
     claimRating: 0,
@@ -57,13 +60,13 @@ function AddClaim() {
     } else {
       handleShow("Please fill in all required fields.");
     }
-  }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setClaim({
       ...claim,
-      [name]: name === 'claimRating' ? parseInt(value, 10) : value,
+      [name]: name === "claimRating" ? parseInt(value, 10) : value,
     });
   };
 
@@ -93,14 +96,14 @@ function AddClaim() {
     return stars;
   };
 
-// ... (previous code)
+  // ... (previous code)
 
-const handleStarClick = (rating, event) => {
-  setSelectedRating(rating);
-  setClaim({ ...claim, claimRating: rating });
-};
+  const handleStarClick = (rating, event) => {
+    setSelectedRating(rating);
+    setClaim({ ...claim, claimRating: rating });
+  };
 
-// ... (rest of your code)
+  // ... (rest of your code)
 
   return (
     <div className="container mt-5">
@@ -108,7 +111,7 @@ const handleStarClick = (rating, event) => {
         <div className="col-md-6">
           <h2>Add new claim</h2>
           <form onSubmit={handleSubmit}>
-          <br></br>
+            <br></br>
 
             <div className="form-group">
               <label htmlFor="claimMail">Email:</label>
@@ -152,7 +155,10 @@ const handleStarClick = (rating, event) => {
             <br></br>
 
             <div className="form-group">
-              <div className="star-rating"> Rating [{selectedRating}] : {renderStars()}</div>
+              <div className="star-rating">
+                {" "}
+                Rating [{selectedRating}] : {renderStars()}
+              </div>
             </div>
             <br></br>
             <button type="submit" className="btn btn-primary">
